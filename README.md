@@ -1,0 +1,2 @@
+# MultimoduleSampleApp
+マルチモジュール構成のサンプルアプリ
