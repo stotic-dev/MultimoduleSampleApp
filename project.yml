@@ -6,18 +6,39 @@ options:
   deploymentTarget:
     iOS: 17.0
   groupOrdering:
-    - order: [MainApp, HomeFeature, Core]
+    - order: [MainApp, HogeFeature, Core, TestHogeFeature, UITest]
 configs:
   Debug: debug
   AppStore: release
 settings:
   base:
-    DEVELOPMENT_TEAM: "stotic-dev"
+    # DEVELOPMENT_TEAM: taichi sato
     MARKETING_VERSION: 1.0.0
     CURRENT_PROJECT_VERSION: 1.0.0
     CODE_SIGN_STYLE: Automatic
+    # Swiftのバージョン
     SWIFT_VERSION: 6.0
-    CLANG_CXX_LANGUAGE_STANDARD: gnu++17
+    # 以降の設定はXcode14のデフォルト設定
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    GCC_DYNAMIC_NO_PIC: NO
+    GCC_NO_COMMON_BLOCKS: YES
+    GCC_C_LANGUAGE_STANDARD: gnu17
+    CLANG_CXX_LANGUAGE_STANDARD: gnu++20
+    ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
+    ENABLE_MODULE_VERIFIER: YES
+  configs:
+    debug:
+      # ビルド成果物の最適化は行わずビルド速度を優先する
+      SWIFT_OPTIMIZATION_LEVEL: -Onone
+      # 以降の設定はXcode14のデフォルト設定
+      VALIDATE_PRODUCT: NO
+      GCC_OPTIMIZATION_LEVEL: "0"
+    appstore:
+      # ビルド速度は落ちるが、ビルド成果物の最適化を行う
+      SWIFT_OPTIMIZATION_LEVEL: -Owholemodule
+      # 以降の設定はXcode14のデフォルト設定
+      VALIDATE_PRODUCT: YES
+      GCC_OPTIMIZATION_LEVEL: "s"
 targets:
   MainApp:
     type: application
@@ -27,6 +48,10 @@ targets:
     settings:
       base:
         INFOPLIST_FILE: MainApp/Info.plist
+        DEVELOPMENT_ASSET_PATHS: MainApp/PreviewContent
+        SWIFT_EMIT_LOC_STRINGS: YES
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_PREVIEWS: YES
     info:
       path: MainApp/Info.plist
       properties:
@@ -42,13 +67,13 @@ targets:
             UIInterfaceOrientationLandscapeRight,
           ]
     dependencies:
-      - target: HomeFeature
+      - target: HogeFeature
       - target: Core
-  HomeFeature:
+  HogeFeature:
     type: framework
     platform: iOS
     supportedDestinations: [iOS]
-    sources: [HomeFeature]
+    sources: [HogeFeature]
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
@@ -62,3 +87,66 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+  TestHogeFeature:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [TestHogeFeature]
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: HogeFeature
+  UITest:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITest]
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: MainApp
+schemes:
+  MainApp:
+    build:
+      targets:
+        MainApp: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      coverageTargets: all
+      targets:
+        - name: TestHogeFeature
+          parallelizable: true
+          randomExecutionOrder: true
+        - name: UITest
+          parallelizable: true
+          randomExecutionOrder: true
+    profile:
+      config: AppStore
+    analyze:
+      config: Debug
+    archive:
+      config: AppStore
+  HogeFeature:
+    templates:
+      - FeatureModuleScheme
+    templateAttributes:
+      testTargetName: TestHogeFeature
+schemeTemplates:
+  FeatureModuleScheme:
+    templates:
+      - TestScheme
+    build:
+      targets:
+        ${scheme_name}: all
+  TestScheme:
+    test:
+      config: Debug
+      gatherCoverageData: true
+      coverageTargets: all
+      targets:
+        - name: ${testTargetName}
+          parallelizable: true
+          randomExecutionOrder: true

@@ -14,5 +14,3 @@ public struct Message {
         self.text = text
     }
 }
-
-
