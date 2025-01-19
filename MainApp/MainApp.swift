@@ -6,7 +6,7 @@
 //
 
 import Core
-import HomeFeature
+import HogeFeature
 import SwiftUI
 
 @main
@@ -14,7 +14,7 @@ struct MainApp: App {
         
     var body: some Scene {
         WindowGroup {
-            HomeView(message: Message(text: "Start App!"))
+            HogeView(message: Message(text: "Start App!"))
         }
     }
 }
