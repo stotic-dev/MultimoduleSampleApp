@@ -18,6 +18,8 @@ settings:
     CODE_SIGN_STYLE: Automatic
     # Swiftのバージョン
     SWIFT_VERSION: 6.0
+    # Info.plistがなければ自動で生成する
+    GENERATE_INFOPLIST_FILE: YES
     # 以降の設定はXcode14のデフォルト設定
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     GCC_DYNAMIC_NO_PIC: NO
@@ -76,7 +78,6 @@ targets:
     sources: [HogeFeature]
     settings:
       base:
-        GENERATE_INFOPLIST_FILE: YES
         MACH_O_TYPE: staticlib
     dependencies:
       - target: Core
@@ -84,25 +85,16 @@ targets:
     type: framework
     platform: iOS
     sources: [Core]
-    settings:
-      base:
-        GENERATE_INFOPLIST_FILE: YES
   TestHogeFeature:
     type: bundle.unit-test
     platform: iOS
     sources: [TestHogeFeature]
-    settings:
-      base:
-        GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: HogeFeature
   UITest:
     type: bundle.ui-testing
     platform: iOS
     sources: [UITest]
-    settings:
-      base:
-        GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: MainApp
 schemes:
