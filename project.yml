@@ -12,7 +12,6 @@ configs:
   AppStore: release
 settings:
   base:
-    # DEVELOPMENT_TEAM: taichi sato
     MARKETING_VERSION: 1.0.0
     CURRENT_PROJECT_VERSION: 1.0.0
     CODE_SIGN_STYLE: Automatic
@@ -45,7 +44,6 @@ targets:
   MainApp:
     type: application
     platform: iOS
-    supportedDestinations: [iOS]
     sources: [MainApp]
     settings:
       base:
@@ -70,15 +68,10 @@ targets:
           ]
     dependencies:
       - target: HogeFeature
-      - target: Core
   HogeFeature:
     type: framework
     platform: iOS
-    supportedDestinations: [iOS]
     sources: [HogeFeature]
-    settings:
-      base:
-        MACH_O_TYPE: staticlib
     dependencies:
       - target: Core
   Core:
